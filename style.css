@@ -1,0 +1,483 @@
+:root {
+  --fons: #f5f6f8;
+  --virsma: #ffffff;
+  --virsma-sekundara: #f9fafb;
+  --robeza: #e2e6ec;
+  --robeza-fokus: #0f5132;
+  --teksts-primarais: #111827;
+  --teksts-sekundarais: #525d6f;
+  --teksts-klusinats: #6b7688;
+  --akcents: #0f5132;
+  --akcents-hover: #0b3d26;
+  --akcents-teksts: #ffffff;
+  --kluda-fons: #fef2f2;
+  --kluda-robeza: #fecaca;
+  --kluda-teksts: #b91c1c;
+  --dzest-hover-fons: #fef2f2;
+  --dzest-hover-robeza: #fca5a5;
+  --dzest-hover-teksts: #b91c1c;
+  --radiuss-panelis: 10px;
+  --radiuss-vadikla: 7px;
+  --fonts-pamata: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --fonts-skaitli: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--fons);
+  color: var(--teksts-primarais);
+  font-family: var(--fonts-pamata);
+  line-height: 1.5;
+}
+
+.konteiners {
+  width: 100%;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.galvene {
+  background-color: var(--virsma);
+  border-bottom: 1px solid var(--robeza);
+}
+
+.galvenes-saturs {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.lietotnes-nosaukums {
+  margin: 0;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--teksts-primarais);
+}
+
+.galvenes-apraksts {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--teksts-sekundarais);
+}
+
+.pamatsaturs {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 28px;
+  padding-bottom: 48px;
+}
+
+.panelis {
+  background-color: var(--virsma);
+  border: 1px solid var(--robeza);
+  border-radius: var(--radiuss-panelis);
+  padding: 24px;
+}
+
+.panela-galvene {
+  margin-bottom: 18px;
+}
+
+.sadales-virsraksts {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--teksts-primarais);
+}
+
+.izdevumu-forma {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lauku-rezgis {
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) minmax(130px, 1fr) minmax(150px, 1.1fr) minmax(155px, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.lauka-grupa {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lauka-etikete {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--teksts-sekundarais);
+}
+
+.ievades-lauks {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: var(--teksts-primarais);
+  background-color: var(--virsma);
+  border: 1px solid var(--robeza);
+  border-radius: var(--radiuss-vadikla);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.ievades-lauks::placeholder {
+  color: var(--teksts-klusinats);
+}
+
+.ievades-lauks:focus-visible,
+.poga-primara:focus-visible,
+.filtra-poga:focus-visible,
+.poga-dzest:focus-visible {
+  outline: 2px solid var(--robeza-fokus);
+  outline-offset: 2px;
+}
+
+.ievades-lauks.kludains {
+  border-color: var(--kluda-teksts);
+  background-color: #fffafa;
+}
+
+.summas-ietvars {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ievades-lauks-summa {
+  padding-right: 34px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.ievades-lauks-datums {
+  font-variant-numeric: tabular-nums;
+}
+
+.valutas-zime {
+  position: absolute;
+  right: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--teksts-sekundarais);
+  pointer-events: none;
+}
+
+.kludas-pazinojums {
+  padding: 12px 14px;
+  background-color: var(--kluda-fons);
+  border: 1px solid var(--kluda-robeza);
+  border-radius: var(--radiuss-vadikla);
+  color: var(--kluda-teksts);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.kludas-pazinojums ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.kludas-pazinojums li + li {
+  margin-top: 4px;
+}
+
+.formas-darbibas {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.poga-primara {
+  min-height: 42px;
+  padding: 9px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radiuss-vadikla);
+  background-color: var(--akcents);
+  color: var(--akcents-teksts);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.poga-primara:hover {
+  background-color: var(--akcents-hover);
+}
+
+.poga-primara:active {
+  transform: translateY(1px);
+}
+
+.saraksta-sadala {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.saraksta-galvene {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.saraksta-virsraksta-bloks {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ierakstu-skaits {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--teksts-sekundarais);
+  font-variant-numeric: tabular-nums;
+}
+
+.kopsummas-bloks {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 14px;
+  background-color: var(--virsma-sekundara);
+  border: 1px solid var(--robeza);
+  border-radius: var(--radiuss-vadikla);
+}
+
+.kopsummas-etikete {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--teksts-sekundarais);
+}
+
+.kopsummas-vertiba {
+  font-family: var(--fonts-skaitli);
+  font-size: 1.1875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--teksts-primarais);
+  white-space: nowrap;
+}
+
+.filtru-josla {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px;
+  background-color: var(--virsma-sekundara);
+  border: 1px solid var(--robeza);
+  border-radius: var(--radiuss-vadikla);
+}
+
+.filtra-poga {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background-color: transparent;
+  color: var(--teksts-sekundarais);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.filtra-poga:hover {
+  color: var(--teksts-primarais);
+}
+
+.filtra-poga.aktiva {
+  background-color: var(--virsma);
+  color: var(--teksts-primarais);
+  border-color: var(--robeza);
+}
+
+.tukss-pazinojums {
+  margin: 0;
+  padding: 28px 16px;
+  text-align: center;
+  color: var(--teksts-sekundarais);
+  font-size: 0.9375rem;
+  background-color: var(--virsma-sekundara);
+  border: 1px dashed var(--robeza);
+  border-radius: var(--radiuss-vadikla);
+}
+
+.izdevumu-saraksts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--robeza);
+}
+
+.izdevumu-saraksts:empty {
+  display: none;
+}
+
+.izdevuma-ieraksts {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--robeza);
+  transition: background-color 150ms ease;
+}
+
+.izdevuma-ieraksts:hover {
+  background-color: var(--virsma-sekundara);
+}
+
+.izdevuma-info {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.izdevuma-apraksts {
+  font-size: 0.96875rem;
+  font-weight: 600;
+  color: var(--teksts-primarais);
+  overflow-wrap: anywhere;
+}
+
+.izdevuma-metadati {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--teksts-sekundarais);
+}
+
+.izdevuma-datums {
+  font-variant-numeric: tabular-nums;
+}
+
+.izdevuma-labais {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.izdevuma-summa {
+  font-family: var(--fonts-skaitli);
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--teksts-primarais);
+  white-space: nowrap;
+}
+
+.poga-dzest {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--robeza);
+  border-radius: var(--radiuss-vadikla);
+  background-color: var(--virsma);
+  color: var(--teksts-sekundarais);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.poga-dzest:hover {
+  background-color: var(--dzest-hover-fons);
+  border-color: var(--dzest-hover-robeza);
+  color: var(--dzest-hover-teksts);
+}
+
+@media (max-width: 820px) {
+  .lauku-rezgis {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .lauks-apraksts {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .konteiners {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .galvenes-saturs {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .panelis {
+    padding: 18px 16px;
+  }
+
+  .lauku-rezgis {
+    grid-template-columns: 1fr;
+  }
+
+  .formas-darbibas {
+    justify-content: stretch;
+  }
+
+  .poga-primara {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .izdevuma-ieraksts {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .izdevuma-labais {
+    justify-content: space-between;
+  }
+
+  .poga-dzest {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}

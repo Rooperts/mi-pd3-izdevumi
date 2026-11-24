@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="lv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Izdevumu uzskaite</title>
+    <meta
+      name="description"
+      content="Vienas lapas personīgo izdevumu uzskaites lietotne ar lokālo datu saglabāšanu."
+    />
+    <meta property="og:title" content="Izdevumu uzskaite" />
+    <meta
+      property="og:description"
+      content="Vienas lapas personīgo izdevumu uzskaites lietotne ar lokālo datu saglabāšanu."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <header class="galvene">
+      <div class="konteiners galvenes-saturs">
+        <h1 class="lietotnes-nosaukums">Izdevumu uzskaite</h1>
+        <p class="galvenes-apraksts">Personīgo tēriņu reģistrs</p>
+      </div>
+    </header>
+
+    <main class="konteiners pamatsaturs">
+      <section class="panelis" aria-labelledby="forma-virsraksts">
+        <div class="panela-galvene">
+          <h2 id="forma-virsraksts" class="sadales-virsraksts">Jauns izdevums</h2>
+        </div>
+
+        <form id="izdevumu-forma" class="izdevumu-forma" novalidate>
+          <div class="lauku-rezgis">
+            <div class="lauka-grupa lauks-apraksts">
+              <label for="apraksts" class="lauka-etikete">Apraksts</label>
+              <input
+                type="text"
+                id="apraksts"
+                name="apraksts"
+                class="ievades-lauks"
+                placeholder="Piemēram, pusdienas vai degviela"
+                maxlength="160"
+                autocomplete="off"
+                required
+              />
+            </div>
+
+            <div class="lauka-grupa lauks-summa">
+              <label for="summa" class="lauka-etikete">Summa (EUR)</label>
+              <div class="summas-ietvars">
+                <input
+                  type="text"
+                  id="summa"
+                  name="summa"
+                  class="ievades-lauks ievades-lauks-summa"
+                  inputmode="decimal"
+                  placeholder="0,00"
+                  autocomplete="off"
+                  required
+                />
+                <span class="valutas-zime" aria-hidden="true">€</span>
+              </div>
+            </div>
+
+            <div class="lauka-grupa lauks-kategorija">
+              <label for="kategorija" class="lauka-etikete">Kategorija</label>
+              <select id="kategorija" name="kategorija" class="ievades-lauks" required>
+                <option value="Pārtika">Pārtika</option>
+                <option value="Transports">Transports</option>
+                <option value="Mājoklis">Mājoklis</option>
+                <option value="Izklaide">Izklaide</option>
+                <option value="Veselība">Veselība</option>
+                <option value="Cits">Cits</option>
+              </select>
+            </div>
+
+            <div class="lauka-grupa lauks-datums">
+              <label for="datums" class="lauka-etikete">Datums</label>
+              <input
+                type="date"
+                id="datums"
+                name="datums"
+                class="ievades-lauks ievades-lauks-datums"
+                required
+              />
+            </div>
+          </div>
+
+          <div
+            id="kludas-pazinojums"
+            class="kludas-pazinojums"
+            role="alert"
+            aria-live="polite"
+            hidden
+          ></div>
+
+          <div class="formas-darbibas">
+            <button type="submit" class="poga-primara">Pievienot izdevumu</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panelis saraksta-sadala" aria-labelledby="saraksta-virsraksts">
+        <div class="saraksta-galvene">
+          <div class="saraksta-virsraksta-bloks">
+            <h2 id="saraksta-virsraksts" class="sadales-virsraksts">Izdevumu saraksts</h2>
+            <p id="ierakstu-skaits" class="ierakstu-skaits"></p>
+          </div>
+
+          <div class="kopsummas-bloks" aria-live="polite">
+            <span class="kopsummas-etikete">Kopsumma</span>
+            <strong id="kopsumma-vertiba" class="kopsummas-vertiba">0,00 €</strong>
+          </div>
+        </div>
+
+        <div class="filtru-josla" role="group" aria-label="Filtrēt pēc kategorijas">
+          <button type="button" class="filtra-poga aktiva" data-kategorija="Visi">Visi</button>
+          <button type="button" class="filtra-poga" data-kategorija="Pārtika">Pārtika</button>
+          <button type="button" class="filtra-poga" data-kategorija="Transports">Transports</button>
+          <button type="button" class="filtra-poga" data-kategorija="Mājoklis">Mājoklis</button>
+          <button type="button" class="filtra-poga" data-kategorija="Izklaide">Izklaide</button>
+          <button type="button" class="filtra-poga" data-kategorija="Veselība">Veselība</button>
+          <button type="button" class="filtra-poga" data-kategorija="Cits">Cits</button>
+        </div>
+
+        <p id="tukss-pazinojums" class="tukss-pazinojums" hidden>
+          Pagaidām nav pievienots neviens izdevums.
+        </p>
+
+        <ul id="izdevumu-saraksts" class="izdevumu-saraksts"></ul>
+      </section>
+    </main>
+  </body>
+</html>
