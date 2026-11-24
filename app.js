@@ -19,8 +19,10 @@ const tuksaisPazinojumsEl = document.getElementById("tukss-pazinojums");
 const kopsummaEl = document.getElementById("kopsumma-vertiba");
 const ierakstuSkaitsEl = document.getElementById("ierakstu-skaits");
 const filtraPogas = Array.from(document.querySelectorAll(".filtra-poga"));
+const meklesanasIevade = document.getElementById("meklesana");
 
 let aktivaKategorija = "Visi";
+let meklesanasVaicajums = "";
 let izdevumi = ieladetIzdevumus();
 
 function iegutSodienasDatumu() {
@@ -113,6 +115,13 @@ function formatetSummu(summaCenti) {
 function formatetDatumu(datums) {
   const [gads, menesis, diena] = datums.split("-");
   return `${diena}.${menesis}.${gads}`;
+}
+
+function normalizetTekstu(teksts) {
+  return teksts
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "");
 }
 
 function generetUnikaluId() {
@@ -271,10 +280,18 @@ function izveidotIzdevumaElementu(ieraksts) {
 }
 
 function atjaunotSarakstu() {
-  const redzamie =
-    aktivaKategorija === "Visi"
-      ? izdevumi
-      : izdevumi.filter((ieraksts) => ieraksts.kategorija === aktivaKategorija);
+  const normalizetsVaicajums = normalizetTekstu(meklesanasVaicajums.trim());
+
+  const redzamie = izdevumi.filter((ieraksts) => {
+    const atbilstKategorijai =
+      aktivaKategorija === "Visi" || ieraksts.kategorija === aktivaKategorija;
+
+    const atbilstMeklesanai =
+      normalizetsVaicajums === "" ||
+      normalizetTekstu(ieraksts.apraksts).includes(normalizetsVaicajums);
+
+    return atbilstKategorijai && atbilstMeklesanai;
+  });
 
   sarakstsEl.replaceChildren();
 
@@ -287,10 +304,13 @@ function atjaunotSarakstu() {
   kopsummaEl.textContent = formatetSummu(kopejieCenti);
 
   if (redzamie.length === 0) {
-    tuksaisPazinojumsEl.textContent =
-      izdevumi.length === 0
-        ? "Pagaidām nav pievienots neviens izdevums."
-        : `Kategorijā "${aktivaKategorija}" nav reģistrētu izdevumu.`;
+    if (izdevumi.length === 0) {
+      tuksaisPazinojumsEl.textContent = "Pagaidām nav pievienots neviens izdevums.";
+    } else if (normalizetsVaicajums !== "") {
+      tuksaisPazinojumsEl.textContent = `Nav atrastu izdevumu vaicājumam "${meklesanasVaicajums.trim()}".`;
+    } else {
+      tuksaisPazinojumsEl.textContent = `Kategorijā "${aktivaKategorija}" nav reģistrētu izdevumu.`;
+    }
     tuksaisPazinojumsEl.hidden = false;
   } else {
     tuksaisPazinojumsEl.hidden = true;
@@ -394,6 +414,11 @@ for (const poga of filtraPogas) {
     atjaunotSarakstu();
   });
 }
+
+meklesanasIevade.addEventListener("input", () => {
+  meklesanasVaicajums = meklesanasIevade.value;
+  atjaunotSarakstu();
+});
 
 datumaIevade.value = iegutSodienasDatumu();
 atjaunotSarakstu();

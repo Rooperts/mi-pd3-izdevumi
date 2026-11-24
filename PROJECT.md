@@ -24,6 +24,7 @@ Katrs ieraksts masīvā satur:
 - `formatetSummu(summaCenti)`, `formatetDatumu(datums)` — datu formatēšana attēlošanai.
 - `izveidotIzdevumaElementu(ieraksts)`, `atjaunotSarakstu()` — saraksta, kopsummas un tukšā stāvokļa attēlošana.
 - `paraditKludas(kludas)`, `notiritKludas()`, `dzestIzdevumu(id)` — kļūdu paziņojumi un ierakstu dzēšana.
+- `normalizetTekstu(teksts)` - meklēšana pēc apraksta ignorē burtu reģistru un diakritiskās zīmes.
 
 ## Noteikumi
 - **Centi:** summu glabā veselos centos (`summaCenti > 0`, līdz 2 decimālzīmēm) un attēlo formātā `"12,50 €"`.
@@ -35,3 +36,4 @@ Katrs ieraksts masīvā satur:
 Projekta mapē palaidiet lokālo statisko HTTP serveri:
 ```bash
 python3 -m http.server 8000
+```
