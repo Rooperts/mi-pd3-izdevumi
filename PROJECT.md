@@ -1,12 +1,12 @@
 # Izdevumu uzskaite
 
 ## Mērķis
-Vienas lapas tīmekļa lietotne personīgo izdevumu reģistrēšanai, filtrēšanai, atkārtošanai un kopsummas aprēķinam pārlūkprogrammā bez servera daļas.
+Vienas lapas tīmekļa lietotne personīgo izdevumu reģistrēšanai, filtrēšanai, atkārtošanai, eksportēšanai un kopsummas aprēķinam pārlūkprogrammā bez servera daļas.
 
 ## Faili un atbildība
-- `index.html` — semantiskā struktūra, ievades forma (ar atkārtošanas izvēlni), filtri un saraksts `#izdevumu-saraksts`.
+- `index.html` — semantiskā struktūra, ievades forma (ar atkārtošanas izvēlni), filtri, CSV eksporta poga un saraksts `#izdevumu-saraksts`.
 - `style.css` — lietotnes vizuālais noformējums, izkārtojums un adaptīvie stili.
-- `app.js` — validācija, stāvoklis, atkārtoto izdevumu ģenerēšana, DOM atjaunošana un `localStorage` sinhronizācija.
+- `app.js` — validācija, stāvoklis, atkārtoto izdevumu ģenerēšana, CSV eksports, DOM atjaunošana un `localStorage` sinhronizācija.
 
 ## Datu struktūra
 Katrs ieraksts masīvā satur:
@@ -21,10 +21,12 @@ Katrs ieraksts masīvā satur:
 - `aprekinatNakamoDatumu(datumaVirkne, atkartot)` — aprēķina +7 dienas vai nākamo mēnesi (pielāgojot mēneša pēdējai dienai).
 - `vaiJauIrNakamaisIeraksts(avotaId)`, `izveidotNakamoIzdevumu(avotaId)` — pārbauda pēcteča esamību pēc `avotaId` un izveido nākamo ierakstu.
 - `sakartotIzdevumus(saraksts)`, `formatetSummu(summaCenti)`, `formatetDatumu(datums)` — kārtošana un formatēšana.
+- `eksportetCSV()`, `formatetSummuCsv(summaCenti)`, `ekranetCsvLauku(vertiba)` — eksportē visus izdevumus UTF-8 ar BOM CSV failā ar `;`.
 - `izveidotIzdevumaElementu(ieraksts)`, `atjaunotSarakstu()` — saraksta, pogas "Izveidot nākamo", meklēšanas un kopsummas attēlošana.
 - `paraditKludas(kludas)`, `notiritKludas()`, `dzestIzdevumu(id)`, `normalizetTekstu(teksts)` — kļūdas, dzēšana un diakritiku normalizācija.
 
 ## Noteikumi un palaišana
 - **Glabāšana un kārtošana:** `localStorage` atslēga `"pd3-izdevumi"`; jaunākie datumi augšā.
 - **Atkārtošana:** no viena avota neveido otru pēcteci, kamēr tas pastāv; dzēstu pēcteci drīkst izveidot atkārtoti.
+- **CSV eksports:** 4 kolonnas (`Datums;Apraksts;Kategorija;Summa EUR`), faila nosaukums `izdevumi-YYYY-MM-DD.csv`.
 - **Serveris:** `python3 -m http.server 8000`

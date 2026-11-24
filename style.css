@@ -481,3 +481,25 @@ body {
     transition: none !important;
   }
 }
+
+.saraksta-labais-bloks {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.poga-sekundara {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  color: inherit;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.poga-sekundara:hover {
+  background-color: #f8fafc;
+}

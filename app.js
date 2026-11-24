@@ -26,6 +26,7 @@ const ierakstuSkaitsEl = document.getElementById("ierakstu-skaits");
 const filtraPogas = Array.from(document.querySelectorAll(".filtra-poga"));
 const meklesanasIevade = document.getElementById("meklesana");
 const atkartotIevade = document.getElementById("atkartot");
+const eksportetCsvPoga = document.getElementById("eksportet-csv");
 
 let aktivaKategorija = "Visi";
 let meklesanasVaicajums = "";
@@ -121,6 +122,50 @@ function formatetSummu(summaCenti) {
 function formatetDatumu(datums) {
   const [gads, menesis, diena] = datums.split("-");
   return `${diena}.${menesis}.${gads}`;
+}
+
+function formatetSummuCsv(summaCenti) {
+  const eiro = Math.floor(summaCenti / 100);
+  const centi = String(summaCenti % 100).padStart(2, "0");
+  return `${eiro},${centi}`;
+}
+
+function ekranetCsvLauku(vertiba) {
+  const teksts = String(vertiba ?? "");
+  if (/[;"\r\n]/.test(teksts)) {
+    return `"${teksts.replace(/"/g, '""')}"`;
+  }
+  return teksts;
+}
+
+function eksportetCSV() {
+  const galvene = ["Datums", "Apraksts", "Kategorija", "Summa EUR"].join(";");
+
+  // Eksportē visus saglabātos izdevumus (masīvu `izdevumi`), ignorējot filtrus un meklēšanu
+  const rindas = izdevumi.map((ieraksts) => {
+    const datums = formatetDatumu(ieraksts.datums); // DD.MM.YYYY
+    const apraksts = ekranetCsvLauku(ieraksts.apraksts);
+    const kategorija = ekranetCsvLauku(ieraksts.kategorija);
+    const summa = formatetSummuCsv(ieraksts.summaCenti); // Piemēram, 3,50
+
+    return [datums, apraksts, kategorija, summa].join(";");
+  });
+
+  const csvSaturs = [galvene, ...rindas].join("\r\n");
+  const bom = "\uFEFF";
+  const blob = new Blob([bom, csvSaturs], {
+    type: "text/csv;charset=utf-8;",
+  });
+
+  const saite = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  saite.href = url;
+  saite.download = `izdevumi-${iegutSodienasDatumu()}.csv`;
+
+  document.body.appendChild(saite);
+  saite.click();
+  document.body.removeChild(saite);
+  URL.revokeObjectURL(url);
 }
 
 function normalizetTekstu(teksts) {
@@ -569,6 +614,8 @@ meklesanasIevade.addEventListener("input", () => {
   meklesanasVaicajums = meklesanasIevade.value;
   atjaunotSarakstu();
 });
+
+eksportetCsvPoga.addEventListener("click", eksportetCSV);
 
 datumaIevade.value = iegutSodienasDatumu();
 atjaunotSarakstu();
