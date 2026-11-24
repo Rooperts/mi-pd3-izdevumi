@@ -1,39 +1,30 @@
 # Izdevumu uzskaite
 
 ## Mērķis
-Vienas lapas tīmekļa lietotne personīgo izdevumu reģistrēšanai, filtrēšanai un kopsummas aprēķinam pārlūkprogrammā bez bibliotēkām un servera daļas.
+Vienas lapas tīmekļa lietotne personīgo izdevumu reģistrēšanai, filtrēšanai, atkārtošanai un kopsummas aprēķinam pārlūkprogrammā bez servera daļas.
 
 ## Faili un atbildība
-- `index.html` — semantiskā struktūra, ievades forma, kategoriju filtri un saraksts `#izdevumu-saraksts`.
+- `index.html` — semantiskā struktūra, ievades forma (ar atkārtošanas izvēlni), filtri un saraksts `#izdevumu-saraksts`.
 - `style.css` — lietotnes vizuālais noformējums, izkārtojums un adaptīvie stili.
-- `app.js` — ievades validācija, stāvokļa pārvaldība, DOM atjaunošana un `localStorage` sinhronizācija.
+- `app.js` — validācija, stāvoklis, atkārtoto izdevumu ģenerēšana, DOM atjaunošana un `localStorage` sinhronizācija.
 
 ## Datu struktūra
 Katrs ieraksts masīvā satur:
-- `id` (`string`) — unikāls identifikators.
-- `apraksts` (`string`) — apgriezts (`trim`) apraksts, attēlots kā teksts.
-- `summaCenti` (`number`) — pozitīvs vesels skaitlis centos.
-- `kategorija` (`string`) — `Pārtika`, `Transports`, `Mājoklis`, `Izklaide`, `Veselība` vai `Cits`.
-- `datums` (`string`) — kalendāra datums formātā `YYYY-MM-DD`.
+- `id` (`string`), `apraksts` (`string`), `summaCenti` (`number` > 0), `kategorija` (`string`), `datums` (`YYYY-MM-DD`).
+- `atkartot` (`string`) — `"nav"`, `"nedela"` vai `"menesis"` (veciem ierakstiem noklusēti `"nav"`).
+- `avotaId` (`string | null`) — avota ieraksta `id`, no kura ģenerēts ieraksts, vai `null`.
 
 ## Galvenās `app.js` funkcijas
-- `ieladetIzdevumus()`, `saglabatIzdevumus(saraksts)` — nolasa, validē un saglabā JSON masīvu.
-- `parsetSummuCentos(ievadeVirkne)` — validē summu un pārvērš to veselos centos.
-- `irDerigsKalendaraDatums(datumaVirkne)`, `iegutSodienasDatumu()` — kalendāra datuma pārbaude un noklusējums.
-- `sakartotIzdevumus(saraksts)` — kārtošana pēc datuma un pievienošanas secības.
-- `formatetSummu(summaCenti)`, `formatetDatumu(datums)` — datu formatēšana attēlošanai.
-- `izveidotIzdevumaElementu(ieraksts)`, `atjaunotSarakstu()` — saraksta, kopsummas un tukšā stāvokļa attēlošana.
-- `paraditKludas(kludas)`, `notiritKludas()`, `dzestIzdevumu(id)` — kļūdu paziņojumi un ierakstu dzēšana.
-- `normalizetTekstu(teksts)` - meklēšana pēc apraksta ignorē burtu reģistru un diakritiskās zīmes.
+- `ieladetIzdevumus()`, `saglabatIzdevumus(saraksts)` — nolasa, migrē, validē un saglabā JSON masīvu.
+- `irDerigsIeraksts(ieraksts)`, `parsetSummuCentos(ievadeVirkne)` — ieraksta un summas validācija.
+- `irDerigsKalendaraDatums(datumaVirkne)`, `iegutSodienasDatumu()` — datuma pārbaude un noklusējums.
+- `aprekinatNakamoDatumu(datumaVirkne, atkartot)` — aprēķina +7 dienas vai nākamo mēnesi (pielāgojot mēneša pēdējai dienai).
+- `vaiJauIrNakamaisIeraksts(avotaId)`, `izveidotNakamoIzdevumu(avotaId)` — pārbauda pēcteča esamību pēc `avotaId` un izveido nākamo ierakstu.
+- `sakartotIzdevumus(saraksts)`, `formatetSummu(summaCenti)`, `formatetDatumu(datums)` — kārtošana un formatēšana.
+- `izveidotIzdevumaElementu(ieraksts)`, `atjaunotSarakstu()` — saraksta, pogas "Izveidot nākamo", meklēšanas un kopsummas attēlošana.
+- `paraditKludas(kludas)`, `notiritKludas()`, `dzestIzdevumu(id)`, `normalizetTekstu(teksts)` — kļūdas, dzēšana un diakritiku normalizācija.
 
-## Noteikumi
-- **Centi:** summu glabā veselos centos (`summaCenti > 0`, līdz 2 decimālzīmēm) un attēlo formātā `"12,50 €"`.
-- **Datuma formāts:** `YYYY-MM-DD` kalendāra datums bez laika joslas pārveidošanas.
-- **Glabāšana:** JSON masīvs `localStorage` atslēgā `"pd3-izdevumi"`.
-- **Saraksta secība:** jaunākie datumi augšā; vienādu datumu gadījumā jaunākie pievienotie ieraksti augšā.
-
-## Palaišana ar statisko serveri
-Projekta mapē palaidiet lokālo statisko HTTP serveri:
-```bash
-python3 -m http.server 8000
-```
+## Noteikumi un palaišana
+- **Glabāšana un kārtošana:** `localStorage` atslēga `"pd3-izdevumi"`; jaunākie datumi augšā.
+- **Atkārtošana:** no viena avota neveido otru pēcteci, kamēr tas pastāv; dzēstu pēcteci drīkst izveidot atkārtoti.
+- **Serveris:** `python3 -m http.server 8000`

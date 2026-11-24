@@ -7,6 +7,11 @@ const ATLAUTAS_KATEGORIJAS = [
   "Veselība",
   "Cits",
 ];
+const ATLAUTIE_ATKARTOJUMI = ["nav", "nedela", "menesis"];
+const ATKARTOJUMA_NOSAUKUMI = {
+  nedela: "Katru nedēļu",
+  menesis: "Katru mēnesi",
+};
 
 const forma = document.getElementById("izdevumu-forma");
 const aprakstaIevade = document.getElementById("apraksts");
@@ -20,6 +25,7 @@ const kopsummaEl = document.getElementById("kopsumma-vertiba");
 const ierakstuSkaitsEl = document.getElementById("ierakstu-skaits");
 const filtraPogas = Array.from(document.querySelectorAll(".filtra-poga"));
 const meklesanasIevade = document.getElementById("meklesana");
+const atkartotIevade = document.getElementById("atkartot");
 
 let aktivaKategorija = "Visi";
 let meklesanasVaicajums = "";
@@ -131,19 +137,112 @@ function generetUnikaluId() {
   return `izd-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-function irDerigsIeraksts(ieraksts) {
-  return (
-    Boolean(ieraksts) &&
-    typeof ieraksts === "object" &&
-    typeof ieraksts.id === "string" &&
-    ieraksts.id.trim().length > 0 &&
-    typeof ieraksts.apraksts === "string" &&
-    ieraksts.apraksts.trim().length > 0 &&
-    Number.isInteger(ieraksts.summaCenti) &&
-    ieraksts.summaCenti > 0 &&
-    ATLAUTAS_KATEGORIJAS.includes(ieraksts.kategorija) &&
-    irDerigsKalendaraDatums(ieraksts.datums)
+function aprekinatNakamoDatumu(datumaVirkne, atkartot) {
+  const [gadsStr, menesisStr, dienaStr] = datumaVirkne.split("-");
+  const gads = Number(gadsStr);
+  const menesis = Number(menesisStr);
+  const diena = Number(dienaStr);
+
+  if (atkartot === "nedela") {
+    const nakamais = new Date(gads, menesis - 1, diena + 7);
+    const jaunaisGads = String(nakamais.getFullYear());
+    const jaunaisMenesis = String(nakamais.getMonth() + 1).padStart(2, "0");
+    const jaunaDiena = String(nakamais.getDate()).padStart(2, "0");
+    return `${jaunaisGads}-${jaunaisMenesis}-${jaunaDiena}`;
+  }
+
+  if (atkartot === "menesis") {
+    const merkaGads = menesis === 12 ? gads + 1 : gads;
+    const merkaMenesis = menesis === 12 ? 1 : menesis + 1;
+    const pedejaDienaMerkaMenesi = new Date(merkaGads, merkaMenesis, 0).getDate();
+    const jaunaDiena = Math.min(diena, pedejaDienaMerkaMenesi);
+
+    return `${String(merkaGads)}-${String(merkaMenesis).padStart(2, "0")}-${String(jaunaDiena).padStart(2, "0")}`;
+  }
+
+  return datumaVirkne;
+}
+
+function vaiJauIrNakamaisIeraksts(avotaId) {
+  return izdevumi.some((ieraksts) => ieraksts.avotaId === avotaId);
+}
+
+function izveidotNakamoIzdevumu(avotaId) {
+  notiritKludas();
+
+  const avotaIeraksts = izdevumi.find((ieraksts) => ieraksts.id === avotaId);
+  if (!avotaIeraksts || avotaIeraksts.atkartot === "nav") {
+    return;
+  }
+
+  if (vaiJauIrNakamaisIeraksts(avotaId)) {
+    return;
+  }
+
+  const nakamaisDatums = aprekinatNakamoDatumu(
+    avotaIeraksts.datums,
+    avotaIeraksts.atkartot
   );
+
+  const nakamaisIeraksts = {
+    id: generetUnikaluId(),
+    apraksts: avotaIeraksts.apraksts,
+    summaCenti: avotaIeraksts.summaCenti,
+    kategorija: avotaIeraksts.kategorija,
+    datums: nakamaisDatums,
+    atkartot: avotaIeraksts.atkartot,
+    avotaId: avotaIeraksts.id,
+  };
+
+  const atjaunotie = sakartotIzdevumus([nakamaisIeraksts, ...izdevumi]);
+  const saglabats = saglabatIzdevumus(atjaunotie);
+
+  if (!saglabats) {
+    paraditKludas([
+      {
+        lauks: null,
+        teksts: "Neizdevās saglabāt nākamo izdevumu pārlūkprogrammas krātuvē.",
+      },
+    ]);
+    return;
+  }
+
+  izdevumi = atjaunotie;
+  atjaunotSarakstu();
+}
+
+function irDerigsIeraksts(ieraksts) {
+  if (
+    !ieraksts ||
+    typeof ieraksts !== "object" ||
+    typeof ieraksts.id !== "string" ||
+    ieraksts.id.trim().length === 0 ||
+    typeof ieraksts.apraksts !== "string" ||
+    ieraksts.apraksts.trim().length === 0 ||
+    !Number.isInteger(ieraksts.summaCenti) ||
+    ieraksts.summaCenti <= 0 ||
+    !ATLAUTAS_KATEGORIJAS.includes(ieraksts.kategorija) ||
+    !irDerigsKalendaraDatums(ieraksts.datums)
+  ) {
+    return false;
+  }
+
+  if (
+    ieraksts.atkartot !== undefined &&
+    !ATLAUTIE_ATKARTOJUMI.includes(ieraksts.atkartot)
+  ) {
+    return false;
+  }
+
+  if (
+    ieraksts.avotaId !== undefined &&
+    ieraksts.avotaId !== null &&
+    (typeof ieraksts.avotaId !== "string" || ieraksts.avotaId.trim().length === 0)
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 function sakartotIzdevumus(saraksts) {
@@ -170,6 +269,8 @@ function ieladetIzdevumus() {
         summaCenti: ieraksts.summaCenti,
         kategorija: ieraksts.kategorija,
         datums: ieraksts.datums,
+        atkartot: ieraksts.atkartot ?? "nav",
+        avotaId: ieraksts.avotaId ?? null,
       }));
 
     return sakartotIzdevumus(derigie);
@@ -194,6 +295,7 @@ function notiritKludas() {
   summasIevade.classList.remove("kludains");
   kategorijasIevade.classList.remove("kludains");
   datumaIevade.classList.remove("kludains");
+  atkartotIevade.classList.remove("kludains");
 }
 
 function paraditKludas(kludas) {
@@ -255,6 +357,19 @@ function izveidotIzdevumaElementu(ieraksts) {
   datumsEl.textContent = formatetDatumu(ieraksts.datums);
 
   metadati.append(kategorijaEl, atdalitajs, datumsEl);
+
+  if (ieraksts.atkartot !== "nav") {
+    const atkartotAtdalitajs = document.createElement("span");
+    atkartotAtdalitajs.setAttribute("aria-hidden", "true");
+    atkartotAtdalitajs.textContent = "·";
+
+    const atkartotEl = document.createElement("span");
+    atkartotEl.className = "izdevuma-atkartot";
+    atkartotEl.textContent = ATKARTOJUMA_NOSAUKUMI[ieraksts.atkartot] || "";
+
+    metadati.append(atkartotAtdalitajs, atkartotEl);
+  }
+
   info.append(aprakstsEl, metadati);
 
   const labaisBloks = document.createElement("div");
@@ -263,6 +378,30 @@ function izveidotIzdevumaElementu(ieraksts) {
   const summaEl = document.createElement("span");
   summaEl.className = "izdevuma-summa";
   summaEl.textContent = formatetSummu(ieraksts.summaCenti);
+
+  labaisBloks.append(summaEl);
+
+  if (ieraksts.atkartot !== "nav") {
+    const nakamaisPoga = document.createElement("button");
+    nakamaisPoga.type = "button";
+    nakamaisPoga.className = "poga-nakamais";
+    nakamaisPoga.textContent = "Izveidot nākamo";
+
+    const jauIzveidots = vaiJauIrNakamaisIeraksts(ieraksts.id);
+    nakamaisPoga.disabled = jauIzveidots;
+    nakamaisPoga.setAttribute(
+      "aria-label",
+      jauIzveidots
+        ? `Nākamais izdevums jau ir izveidots: ${ieraksts.apraksts}`
+        : `Izveidot nākamo izdevumu: ${ieraksts.apraksts}`
+    );
+
+    nakamaisPoga.addEventListener("click", () => {
+      izveidotNakamoIzdevumu(ieraksts.id);
+    });
+
+    labaisBloks.append(nakamaisPoga);
+  }
 
   const dzestPoga = document.createElement("button");
   dzestPoga.type = "button";
@@ -273,7 +412,7 @@ function izveidotIzdevumaElementu(ieraksts) {
     dzestIzdevumu(ieraksts.id);
   });
 
-  labaisBloks.append(summaEl, dzestPoga);
+  labaisBloks.append(dzestPoga);
   li.append(info, labaisBloks);
 
   return li;
@@ -336,6 +475,7 @@ forma.addEventListener("submit", (notikums) => {
   const summasRezultats = parsetSummuCentos(summasIevade.value);
   const kategorija = kategorijasIevade.value;
   const datums = datumaIevade.value;
+  const atkartot = atkartotIevade.value;
 
   if (apraksts.length === 0) {
     kludas.push({
@@ -365,6 +505,13 @@ forma.addEventListener("submit", (notikums) => {
     });
   }
 
+  if (!ATLAUTIE_ATKARTOJUMI.includes(atkartot)) {
+    kludas.push({
+      lauks: atkartotIevade,
+      teksts: "Lūdzu, izvēlieties derīgu atkārtošanas režīmu.",
+    });
+  }
+
   if (kludas.length > 0) {
     paraditKludas(kludas);
     return;
@@ -376,6 +523,8 @@ forma.addEventListener("submit", (notikums) => {
     summaCenti: summasRezultats.summaCenti,
     kategorija,
     datums,
+    atkartot,
+    avotaId: null,
   };
 
   const atjaunotie = sakartotIzdevumus([jaunsIzdevums, ...izdevumi]);
@@ -394,6 +543,7 @@ forma.addEventListener("submit", (notikums) => {
   izdevumi = atjaunotie;
   aprakstaIevade.value = "";
   summasIevade.value = "";
+  atkartotIevade.value = "nav";
   if (!datumaIevade.value) {
     datumaIevade.value = iegutSodienasDatumu();
   }
