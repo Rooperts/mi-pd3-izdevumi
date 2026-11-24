@@ -27,10 +27,15 @@ const filtraPogas = Array.from(document.querySelectorAll(".filtra-poga"));
 const meklesanasIevade = document.getElementById("meklesana");
 const atkartotIevade = document.getElementById("atkartot");
 const eksportetCsvPoga = document.getElementById("eksportet-csv");
+const menesaIzvele = document.getElementById("menesa-izvele");
+const menesaTabula = document.getElementById("menesa-kopsavilkuma-tabula");
+const menesaTabulasRindas = document.getElementById("menesa-kopsavilkuma-rindas");
+const menesaTukssPazinojums = document.getElementById("menesa-kopsavilkuma-tukss");
 
 let aktivaKategorija = "Visi";
 let meklesanasVaicajums = "";
 let izdevumi = ieladetIzdevumus();
+let izveletaisMenesis = "";
 
 function iegutSodienasDatumu() {
   const tagad = new Date();
@@ -122,6 +127,98 @@ function formatetSummu(summaCenti) {
 function formatetDatumu(datums) {
   const [gads, menesis, diena] = datums.split("-");
   return `${diena}.${menesis}.${gads}`;
+}
+
+function iegutMenesaKopsavilkumaMenesus(saraksts) {
+  const menesi = new Set();
+  for (const ieraksts of saraksts) {
+    menesi.add(ieraksts.datums.slice(0, 7));
+  }
+  return Array.from(menesi).sort((a, b) => b.localeCompare(a));
+}
+
+function atjaunotMenesaKopsavilkumu() {
+  const pieejamieMenesi = iegutMenesaKopsavilkumaMenesus(izdevumi);
+
+  if (
+    izveletaisMenesis &&
+    !pieejamieMenesi.includes(izveletaisMenesis)
+  ) {
+    izveletaisMenesis = "";
+  }
+
+  if (!izveletaisMenesis && pieejamieMenesi.length > 0) {
+    izveletaisMenesis = pieejamieMenesi[0];
+  }
+
+  menesaIzvele.replaceChildren();
+  for (const menesis of pieejamieMenesi) {
+    const opcija = document.createElement("option");
+    opcija.value = menesis;
+    opcija.textContent = menesis;
+    menesaIzvele.appendChild(opcija);
+  }
+
+  menesaIzvele.value = izveletaisMenesis;
+
+  if (pieejamieMenesi.length === 0) {
+    menesaIzvele.disabled = true;
+    menesaTabula.hidden = true;
+    menesaTukssPazinojums.hidden = false;
+    menesaTabulasRindas.replaceChildren();
+    return;
+  }
+
+  menesaIzvele.disabled = false;
+  menesaTabula.hidden = false;
+  menesaTukssPazinojums.hidden = true;
+
+  const kopsavilkums = new Map();
+  let menesaKopsummaCenti = 0;
+
+  for (const ieraksts of izdevumi) {
+    if (ieraksts.datums.slice(0, 7) !== izveletaisMenesis) {
+      continue;
+    }
+
+    menesaKopsummaCenti += ieraksts.summaCenti;
+    const esošais = kopsavilkums.get(ieraksts.kategorija) ?? {
+      kategorija: ieraksts.kategorija,
+      skaits: 0,
+      summaCenti: 0,
+    };
+    esošais.skaits += 1;
+    esošais.summaCenti += ieraksts.summaCenti;
+    kopsavilkums.set(ieraksts.kategorija, esošais);
+  }
+
+  const rindas = Array.from(kopsavilkums.values()).sort(
+    (a, b) => b.summaCenti - a.summaCenti
+  );
+
+  menesaTabulasRindas.replaceChildren();
+  for (const rinda of rindas) {
+    const tr = document.createElement("tr");
+
+    const kategorijaTd = document.createElement("td");
+    kategorijaTd.textContent = rinda.kategorija;
+
+    const skaitsTd = document.createElement("td");
+    skaitsTd.textContent = String(rinda.skaits);
+
+    const summaTd = document.createElement("td");
+    summaTd.textContent = formatetSummu(rinda.summaCenti);
+
+    const dalaTd = document.createElement("td");
+    const procents =
+      menesaKopsummaCenti > 0
+        ? Math.round((rinda.summaCenti / menesaKopsummaCenti) * 100)
+        : 0;
+    dalaTd.textContent = `${procents} %`;
+
+    tr.append(kategorijaTd, skaitsTd, summaTd, dalaTd);
+    menesaTabulasRindas.appendChild(tr);
+  }
 }
 
 function formatetSummuCsv(summaCenti) {
@@ -254,6 +351,7 @@ function izveidotNakamoIzdevumu(avotaId) {
 
   izdevumi = atjaunotie;
   atjaunotSarakstu();
+  atjaunotMenesaKopsavilkumu();
 }
 
 function irDerigsIeraksts(ieraksts) {
@@ -509,6 +607,7 @@ function dzestIzdevumu(id) {
   izdevumi = izdevumi.filter((ieraksts) => ieraksts.id !== id);
   saglabatIzdevumus(izdevumi);
   atjaunotSarakstu();
+  atjaunotMenesaKopsavilkumu();
 }
 
 forma.addEventListener("submit", (notikums) => {
@@ -594,6 +693,7 @@ forma.addEventListener("submit", (notikums) => {
   }
 
   atjaunotSarakstu();
+  atjaunotMenesaKopsavilkumu();
   aprakstaIevade.focus();
 });
 
@@ -617,5 +717,11 @@ meklesanasIevade.addEventListener("input", () => {
 
 eksportetCsvPoga.addEventListener("click", eksportetCSV);
 
+menesaIzvele.addEventListener("change", () => {
+  izveletaisMenesis = menesaIzvele.value;
+  atjaunotMenesaKopsavilkumu();
+});
+
 datumaIevade.value = iegutSodienasDatumu();
 atjaunotSarakstu();
+atjaunotMenesaKopsavilkumu();

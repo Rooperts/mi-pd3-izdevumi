@@ -503,3 +503,77 @@ body {
 .poga-sekundara:hover {
   background-color: #f8fafc;
 }
+
+.menesa-kopsavilkuma-sadala {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.menesa-kopsavilkuma-galvene {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.menesa-izvelne {
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.menesa-tabulas-ietvars {
+  overflow-x: auto;
+}
+
+.menesa-tabula {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.menesa-tabula th,
+.menesa-tabula td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--robeza);
+  text-align: right;
+}
+
+.menesa-tabula th {
+  background-color: var(--virsma-sekundara);
+  color: var(--teksts-sekundarais);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.menesa-tabula th:first-child,
+.menesa-tabula td:first-child {
+  text-align: left;
+}
+
+.menesa-tabula tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.menesa-tabula td:nth-child(3),
+.menesa-tabula td:nth-child(4) {
+  font-family: var(--fonts-skaitli);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .menesa-kopsavilkuma-galvene {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .menesa-izvelne {
+    width: 100%;
+  }
+
+  .menesa-tabula th,
+  .menesa-tabula td {
+    padding: 10px 6px;
+  }
+}

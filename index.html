@@ -158,6 +158,36 @@
 
         <ul id="izdevumu-saraksts" class="izdevumu-saraksts"></ul>
       </section>
+
+      <section class="panelis menesa-kopsavilkuma-sadala" aria-labelledby="menesa-kopsavilkuma-virsraksts">
+        <div class="menesa-kopsavilkuma-galvene">
+          <h2 id="menesa-kopsavilkuma-virsraksts" class="sadales-virsraksts">
+            Mēneša kopsavilkums
+          </h2>
+          <div class="lauka-grupa menesa-izvelne">
+            <label for="menesa-izvele" class="lauka-etikete">Mēnesis</label>
+            <select id="menesa-izvele" class="ievades-lauks"></select>
+          </div>
+        </div>
+
+        <p id="menesa-kopsavilkuma-tukss" class="tukss-pazinojums" hidden>
+          Nav pieejamu izdevumu mēneša kopsavilkumam.
+        </p>
+
+        <div class="menesa-tabulas-ietvars">
+          <table id="menesa-kopsavilkuma-tabula" class="menesa-tabula">
+            <thead>
+              <tr>
+                <th scope="col">Kategorija</th>
+                <th scope="col">Ierakstu skaits</th>
+                <th scope="col">Summa</th>
+                <th scope="col">Daļa</th>
+              </tr>
+            </thead>
+            <tbody id="menesa-kopsavilkuma-rindas"></tbody>
+          </table>
+        </div>
+      </section>
     </main>
   </body>
 </html>
