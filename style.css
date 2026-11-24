@@ -504,6 +504,53 @@ body {
   background-color: #f8fafc;
 }
 
+.atkartojuma-josla {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 42px;
+  padding: 4px;
+  background-color: var(--virsma-sekundara);
+  border: 1px solid var(--robeza);
+  border-radius: var(--radiuss-vadikla);
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.atkartojuma-josla.kludains {
+  border-color: var(--kluda-teksts);
+  background-color: #fffafa;
+}
+
+.atkartojuma-poga {
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background-color: transparent;
+  color: var(--teksts-sekundarais);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.atkartojuma-poga:hover {
+  color: var(--teksts-primarais);
+}
+
+.atkartojuma-poga.aktiva {
+  background-color: var(--virsma);
+  color: var(--teksts-primarais);
+  border-color: var(--robeza);
+}
+
+.atkartojuma-poga:focus-visible {
+  outline: 2px solid var(--robeza-fokus);
+  outline-offset: 2px;
+}
+
 .menesa-kopsavilkuma-sadala {
   display: flex;
   flex-direction: column;

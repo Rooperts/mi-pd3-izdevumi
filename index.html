@@ -89,12 +89,41 @@
             </div>
 
             <div class="lauka-grupa lauks-atkartot">
-              <label for="atkartot" class="lauka-etikete">Atkārtot</label>
-              <select id="atkartot" name="atkartot" class="ievades-lauks" required>
-                <option value="nav">Nav</option>
-                <option value="nedela">Katru nedēļu</option>
-                <option value="menesis">Katru mēnesi</option>
-              </select>
+              <span class="lauka-etikete" id="atkartot-etikete">Atkārtot</span>
+              <input type="hidden" id="atkartot" name="atkartot" value="nav" />
+              <div
+                class="atkartojuma-josla"
+                role="radiogroup"
+                aria-labelledby="atkartot-etikete"
+              >
+                <button
+                  type="button"
+                  class="atkartojuma-poga aktiva"
+                  data-atkartot="nav"
+                  role="radio"
+                  aria-checked="true"
+                >
+                  Nav
+                </button>
+                <button
+                  type="button"
+                  class="atkartojuma-poga"
+                  data-atkartot="nedela"
+                  role="radio"
+                  aria-checked="false"
+                >
+                  Katru nedēļu
+                </button>
+                <button
+                  type="button"
+                  class="atkartojuma-poga"
+                  data-atkartot="menesis"
+                  role="radio"
+                  aria-checked="false"
+                >
+                  Katru mēnesi
+                </button>
+              </div>
             </div>
           </div>
 
@@ -123,6 +152,7 @@
             <button type="button" id="eksportet-csv" class="poga-sekundara">
               Eksportēt CSV
             </button>
+          </div>
 
           <div class="kopsummas-bloks" aria-live="polite">
             <span class="kopsummas-etikete">Kopsumma</span>

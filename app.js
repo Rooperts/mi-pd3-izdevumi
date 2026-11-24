@@ -26,6 +26,8 @@ const ierakstuSkaitsEl = document.getElementById("ierakstu-skaits");
 const filtraPogas = Array.from(document.querySelectorAll(".filtra-poga"));
 const meklesanasIevade = document.getElementById("meklesana");
 const atkartotIevade = document.getElementById("atkartot");
+const atkartotPogas = Array.from(document.querySelectorAll(".atkartojuma-poga"));
+const atkartojumaJosla = document.querySelector(".atkartojuma-josla");
 const eksportetCsvPoga = document.getElementById("eksportet-csv");
 const menesaIzvele = document.getElementById("menesa-izvele");
 const menesaTabula = document.getElementById("menesa-kopsavilkuma-tabula");
@@ -438,7 +440,7 @@ function notiritKludas() {
   summasIevade.classList.remove("kludains");
   kategorijasIevade.classList.remove("kludains");
   datumaIevade.classList.remove("kludains");
-  atkartotIevade.classList.remove("kludains");
+  atkartojumaJosla.classList.remove("kludains");
 }
 
 function paraditKludas(kludas) {
@@ -449,7 +451,9 @@ function paraditKludas(kludas) {
   }
 
   for (const kluda of kludas) {
-    if (kluda.lauks) {
+    if (kluda.lauks === atkartotIevade) {
+      atkartojumaJosla.classList.add("kludains");
+    } else if (kluda.lauks) {
       kluda.lauks.classList.add("kludains");
     }
   }
@@ -467,9 +471,21 @@ function paraditKludas(kludas) {
   }
 
   kludasBloks.hidden = false;
-  if (kludas[0].lauks) {
+  if (kludas[0].lauks === atkartotIevade) {
+    atkartojumaJosla.querySelector('[aria-checked="true"]')?.focus();
+  } else if (kludas[0].lauks) {
     kludas[0].lauks.focus();
   }
+}
+
+function atiestatitAtkartojumaIzveli() {
+  atkartotIevade.value = "nav";
+  for (const poga of atkartotPogas) {
+    const aktiva = poga.dataset.atkartot === "nav";
+    poga.classList.toggle("aktiva", aktiva);
+    poga.setAttribute("aria-checked", String(aktiva));
+  }
+  atkartojumaJosla.classList.remove("kludains");
 }
 
 function izveidotIzdevumaElementu(ieraksts) {
@@ -687,7 +703,7 @@ forma.addEventListener("submit", (notikums) => {
   izdevumi = atjaunotie;
   aprakstaIevade.value = "";
   summasIevade.value = "";
-  atkartotIevade.value = "nav";
+  atiestatitAtkartojumaIzveli();
   if (!datumaIevade.value) {
     datumaIevade.value = iegutSodienasDatumu();
   }
@@ -714,6 +730,21 @@ meklesanasIevade.addEventListener("input", () => {
   meklesanasVaicajums = meklesanasIevade.value;
   atjaunotSarakstu();
 });
+
+for (const poga of atkartotPogas) {
+  poga.addEventListener("click", () => {
+    const izveletaVertiba = poga.dataset.atkartot || "nav";
+    atkartotIevade.value = izveletaVertiba;
+
+    for (const citaPoga of atkartotPogas) {
+      const aktiva = citaPoga === poga;
+      citaPoga.classList.toggle("aktiva", aktiva);
+      citaPoga.setAttribute("aria-checked", String(aktiva));
+    }
+
+    atkartojumaJosla.classList.remove("kludains");
+  });
+}
 
 eksportetCsvPoga.addEventListener("click", eksportetCSV);
 
